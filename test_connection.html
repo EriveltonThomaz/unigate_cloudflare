@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste de Conexão API</title>
+</head>
+<body>
+    <h1>Teste de Conexão com a API</h1>
+    <button onclick="testConnection()">Testar Conexão</button>
+    <div id="result"></div>
+
+    <script>
+        async function testConnection() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testando...';
+            
+            try {
+                // Teste 1: Stats (sem autenticação)
+                const statsResponse = await fetch('http://localhost:8000/api/auth/stats/');
+                const statsData = await statsResponse.json();
+                console.log('Stats:', statsData);
+                
+                // Teste 2: Login
+                const loginResponse = await fetch('http://localhost:8000/api/auth/token/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'temtudonaweb.td@gmail.com',
+                        password: 'admin123'
+                    })
+                });
+                
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    console.log('Login:', loginData);
+                    
+                    // Teste 3: Usuários (com autenticação)
+                    const usersResponse = await fetch('http://localhost:8000/api/admin/users/', {
+                        headers: {
+                            'Authorization': `Bearer ${loginData.access}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (usersResponse.ok) {
+                        const usersData = await usersResponse.json();
+                        console.log('Users:', usersData);
+                        resultDiv.innerHTML = `
+                            <h2>✅ Conexão OK!</h2>
+                            <p><strong>Stats:</strong> ${JSON.stringify(statsData)}</p>
+                            <p><strong>Login:</strong> Token recebido</p>
+                            <p><strong>Users:</strong> ${usersData.length} usuários encontrados</p>
+                        `;
+                    } else {
+                        throw new Error(`Erro ao buscar usuários: ${usersResponse.status}`);
+                    }
+                } else {
+                    throw new Error(`Erro no login: ${loginResponse.status}`);
+                }
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                resultDiv.innerHTML = `<h2>❌ Erro:</h2><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+/* styles/globals.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* Branco */
+    --foreground: 140 60% 10%; /* Verde escuro para texto */
+
+    --card: 0 0% 100%;
+    --card-foreground: 140 60% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 140 60% 10%;
+
+    --primary: 142 76% 36%; /* Verde principal */
+    --primary-foreground: 0 0% 100%; /* Branco para texto do primário */
+ 
+    --secondary: 140 20% 90%; /* Verde claro para secundário */
+    --secondary-foreground: 140 60% 10%; /* Verde escuro para texto do secundário */
+
+    --muted: 140 10% 95%; /* Verde muito claro para muted */
+    --muted-foreground: 140 30% 40%; /* Verde acinzentado para texto muted */
+
+    --accent: 140 20% 90%; /* Verde claro para accent */
+    --accent-foreground: 140 60% 10%; /* Verde escuro para texto accent */
+
+    --destructive: 0 84.2% 60.2%; /* Vermelho para destructive */
+    --destructive-foreground: 0 0% 100%; /* Branco para texto destructive */
+
+    --border: 140 15% 80%; /* Verde acinzentado para bordas */
+    --input: 140 15% 80%; /* Verde acinzentado para inputs */
+    --ring: 142 76% 36%; /* Verde principal para ring */
+
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 220 20% 10%; /* Cinza escuro para background */
+    --foreground: 0 0% 100%; /* Branco para texto */
+
+    --card: 220 20% 13%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 220 20% 13%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 142 76% 45%; /* Verde principal mais brilhante no modo escuro */
+    --primary-foreground: 0 0% 100%; /* Branco para texto do primário */
+ 
+    --secondary: 220 20% 20%; /* Cinza escuro para secundário */
+    --secondary-foreground: 0 0% 100%; /* Branco para texto do secundário */
+
+    --muted: 220 20% 18%; /* Cinza escuro para muted */
+    --muted-foreground: 220 10% 70%; /* Cinza claro para texto muted */
+
+    --accent: 142 50% 25%; /* Verde escuro para accent */
+    --accent-foreground: 0 0% 100%; /* Branco para texto accent */
+
+    --destructive: 0 62.8% 30.6%; /* Vermelho escuro para destructive */
+    --destructive-foreground: 0 0% 100%; /* Branco para texto destructive */
+
+    --border: 220 20% 25%; /* Cinza escuro para bordas */
+    --input: 220 20% 25%; /* Cinza escuro para inputs */
+    --ring: 142 76% 45%; /* Verde principal para ring */
+  }
+}
+
+/* 
+ * BOAS PRÁTICAS PARA Z-INDEX E OVERLAYS
+ * 
+ * Para garantir que modais e menus funcionem corretamente:
+ * 
+ * 1. MODAIS: Sempre use z-50 ou superior
+ *    - fixed inset-0 z-50 flex items-center justify-center
+ *    - bg-background/80 ou bg-black/50 para overlay
+ * 
+ * 2. MENUS DROPDOWN: Use z-10 a z-30
+ *    - absolute z-10 ou z-20 para menus
+ *    - Nunca acima de z-50 (modais)
+ * 
+ * 3. EVITE REGRAS GLOBAIS PERIGOSAS:
+ *    - Não use overflow: hidden em body/html
+ *    - Não use position: relative global
+ *    - Não redefina z-index globalmente
+ * 
+ * 4. HIERARQUIA RECOMENDADA:
+ *    - z-10: Menus dropdown, tooltips
+ *    - z-20: Sidebars, headers fixos
+ *    - z-30: Notificações toast
+ *    - z-40: Modais de confirmação
+ *    - z-50: Modais principais, overlays
+ *    - z-60+: Apenas em casos especiais
+ */
+
+/* Você pode adicionar outros estilos globais que não sejam do Tailwind aqui embaixo, se precisar */
