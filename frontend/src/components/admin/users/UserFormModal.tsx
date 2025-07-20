@@ -282,7 +282,13 @@ const UserFormModal = ({ user, onClose, onSave, title = user ? 'Editar Usuário'
       
       if (result && result.success) {
         toast.success('Usuário salvo com sucesso!');
-        if (user) onSave(user);
+        // Passar o usuário salvo para o callback onSave
+        if (user) {
+          onSave(user);
+        } else if (result.user) {
+          // Se for um novo usuário, passar o usuário retornado pela API
+          onSave(result.user);
+        }
         onClose();
       } else if (result && result.error) {
         // Mensagens de erro mais amigáveis
@@ -295,7 +301,12 @@ const UserFormModal = ({ user, onClose, onSave, title = user ? 'Editar Usuário'
         }
       } else if (result) {
         toast.success('Usuário salvo com sucesso!');
-        if (user) onSave(user);
+        if (user) {
+          onSave(user);
+        } else if (result.user) {
+          // Se for um novo usuário, passar o usuário retornado pela API
+          onSave(result.user);
+        }
         onClose();
       } else {
         toast.error('Não foi possível salvar o usuário. Verifique os dados e tente novamente.');
@@ -582,6 +593,26 @@ const UserFormModal = ({ user, onClose, onSave, title = user ? 'Editar Usuário'
                         <div className="ml-3">
                           <p className="text-sm text-blue-700">
                             <strong>Permissões desativadas para novos usuários.</strong> Após criar o usuário, vá para a seção de Clientes e adicione-o como gerente de um cliente para conceder permissões.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Aviso de que o usuário precisa ser gerente para ter permissões */}
+                {formData.role === 'user' && (
+                  <div className="mt-2">
+                    <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-sm text-yellow-700">
+                            <strong>Importante:</strong> Para que este usuário tenha acesso a domínios, ele precisa ser adicionado como gerente de um cliente na seção de Clientes.
                           </p>
                         </div>
                       </div>

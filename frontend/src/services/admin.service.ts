@@ -351,7 +351,22 @@ export const saveUser = async (userData: any, isFormData: boolean = false): Prom
       // Não defina Content-Type, o navegador faz isso automaticamente para FormData
       headers: {},
     });
-    return mapToUser(savedData);
+    
+    // Buscar dados completos do usuário após salvar
+    const user = mapToUser(savedData);
+    
+    // Se for um novo usuário, buscar dados completos incluindo permissões
+    if (method === 'POST') {
+      try {
+        const completeUserData = await api(`/admin/users/${user.id}/`);
+        return mapToUser(completeUserData);
+      } catch (error) {
+        // Se falhar, retorna os dados básicos
+        return user;
+      }
+    }
+    
+    return user;
 
   } else {
     // Se for um objeto JSON normal

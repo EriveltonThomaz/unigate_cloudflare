@@ -1,0 +1,11 @@
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  // Para Next.js 14.2.5, esta opção deve estar no nível principal.
+  allowedDevOrigins: ["http://192.168.34.19:3000", "http://localhost:3000", "http://192.168.34.65:3000"],
+  // Adiciona suporte para exportação standalone
+  output: 'standalone',
+};
+
+module.exports = nextConfig;

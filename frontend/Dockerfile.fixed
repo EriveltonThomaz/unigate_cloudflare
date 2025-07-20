@@ -12,7 +12,8 @@ WORKDIR /app
 
 # Copie apenas os arquivos necessários para instalar as dependências
 COPY package.json pnpm-lock.yaml* ./
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+# Removido o flag --frozen-lockfile para permitir atualização do lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 # Build do projeto Next.js
 FROM base AS builder

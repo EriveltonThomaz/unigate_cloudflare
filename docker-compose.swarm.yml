@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ${DOCKER_USERNAME:-unigate}/cloudflare-backend:${TAG:-latest}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cloudflare_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-r3djGX2vPoeL9zKL}
+      POSTGRES_HOST: ${POSTGRES_HOST:-srv_postgres}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      DEBUG: ${DEBUG:-False}
+      SECRET_KEY: ${SECRET_KEY:-cf2f97a240aefeb6d5b38b1806eade35f1831ebd50e7ae12c6074bfbb48b6684}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend,frontend,*.unigate.com.br,cloudflare.api.unigate.com.br}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-https://cloudflare.unigate.com.br}
+      STATIC_ROOT: /app/staticfiles
+      MEDIA_ROOT: /app/media
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.backend.rule=Host(`cloudflare.api.unigate.com.br`)"
+        - "traefik.http.routers.backend.entrypoints=websecure"
+        - "traefik.http.routers.backend.tls=true"
+        - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.backend.loadbalancer.server.port=8000"
+        - "traefik.http.middlewares.backend-compress.compress=true"
+        - "traefik.http.routers.backend.middlewares=backend-compress"
+
+  frontend:
+    image: ${DOCKER_USERNAME:-unigate}/cloudflare-frontend:${TAG:-latest}
+    networks:
+      - traefik-public
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.frontend.rule=Host(`cloudflare.unigate.com.br`)"
+        - "traefik.http.routers.frontend.entrypoints=websecure"
+        - "traefik.http.routers.frontend.tls=true"
+        - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+        - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+        - "traefik.http.middlewares.frontend-compress.compress=true"
+        - "traefik.http.routers.frontend.middlewares=frontend-compress"
+        # Redirecionar /admin para o backend
+        - "traefik.http.routers.frontend-admin.rule=Host(`cloudflare.unigate.com.br`) && PathPrefix(`/admin`)"
+        - "traefik.http.routers.frontend-admin.entrypoints=websecure"
+        - "traefik.http.routers.frontend-admin.tls=true"
+        - "traefik.http.routers.frontend-admin.service=backend"
+        # Redirecionar /api para o backend
+        - "traefik.http.routers.frontend-api.rule=Host(`cloudflare.unigate.com.br`) && PathPrefix(`/api`)"
+        - "traefik.http.routers.frontend-api.entrypoints=websecure"
+        - "traefik.http.routers.frontend-api.tls=true"
+        - "traefik.http.routers.frontend-api.service=backend"
+
+networks:
+  traefik-public:
+    external: true

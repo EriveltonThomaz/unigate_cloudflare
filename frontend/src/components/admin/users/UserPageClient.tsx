@@ -152,17 +152,33 @@ const UserPageClient = ({ initialUsers }: UserPageClientProps) => {
 
   const handleUserSaved = async (savedUser: User) => {
     setIsFormModalOpen(false);
-    
+
     // Atualizar a lista de usuários
     try {
       // Recarregar a lista completa de usuários para garantir que esteja atualizada
       const { getUsers } = await import('@/services/admin.client');
       const updatedUsers = await getUsers();
-      setUsers(updatedUsers);
+
+      // Se for um novo usuário, buscar os dados completos do usuário recém-criado
+      if (!editingUser) {
+        const { getUserById } = await import('@/services/admin.client');
+        // Encontrar o usuário recém-adicionado na lista atualizada
+        const newUser = updatedUsers.find(u => u.email === savedUser.email);
+        if (newUser) {
+          // Buscar dados completos do usuário, incluindo permissões
+          const completeUserData = await getUserById(newUser.id);
+          // Substituir o usuário na lista com os dados completos
+          setUsers(updatedUsers.map(u => u.id === newUser.id ? completeUserData : u));
+        } else {
+          setUsers(updatedUsers);
+        }
+      } else {
+        setUsers(updatedUsers);
+      }
     } catch (error) {
       // Erro silencioso
     }
-    
+
     fetchPermissions(); // Atualiza a tabela de permissões
   };
 
@@ -245,7 +261,7 @@ const UserPageClient = ({ initialUsers }: UserPageClientProps) => {
       </div>
 
       {isFormModalOpen && (
-        <UserFormModal 
+        <UserFormModal
           user={editingUser}
           onClose={handleCloseFormModal}
           onSave={handleUserSaved}

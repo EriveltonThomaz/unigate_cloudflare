@@ -18,15 +18,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
 
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    image: unigate-backend:latest
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./backend:/app
+      dockerfile: Dockerfile.prod
+    image: unigate-backend:prod
     ports:
       - "8000:8000"
     environment:
@@ -35,35 +38,74 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mypassword}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-      DEBUG: ${DEBUG:-True}
+      DEBUG: ${DEBUG:-False}
       SECRET_KEY: ${SECRET_KEY:-your-secret-key-here}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://frontend:3000}
+      STATIC_ROOT: /app/staticfiles
+      MEDIA_ROOT: /app/media
     depends_on:
       db:
         condition: service_healthy
     networks:
       - app-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.fixed
-    image: unigate-frontend:latest
+      dockerfile: Dockerfile.simple
+    image: unigate-frontend:simple
     ports:
       - "3000:3000"
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api}
-      NODE_ENV: ${NODE_ENV:-production}
     depends_on:
       - backend
     networks:
       - app-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health.html"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/var/www/html
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
 
   init_backend:
-    image: unigate-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    image: unigate-backend:prod
     command: >
       sh -c "python manage.py migrate &&
       echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('${DJANGO_SUPERUSER_USERNAME:-admin}', '${DJANGO_SUPERUSER_EMAIL:-admin@example.com}', '${DJANGO_SUPERUSER_PASSWORD:-adminpassword}') if not User.objects.filter(username='${DJANGO_SUPERUSER_USERNAME:-admin}').exists() else print('Superuser already exists')\" | python manage.py shell"

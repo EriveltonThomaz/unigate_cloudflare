@@ -6,7 +6,8 @@ import { getDomainById } from '@/services/admin.client';
 import { getCustomDNSRecords } from '@/services/admin.client';
 import { getUserDomainPermissionByUserAndDomain } from '@/services/admin.client';
 import { useAuth } from '@/contexts/AuthContext';
-import { api } from '@/services/api';
+// Importando api.js em vez de api.ts
+import api from '@/services/api.js';
 import DeleteConfirmationModal from '@/components/Dashboard/Domains/DeleteConfirmationModal';
 import DNSRecordFormModal from '@/components/admin/dns-records/DNSRecordFormModal';
 import { formatDNSRecords } from '@/components/admin/dns-records/DNSRecordUtils';
@@ -162,8 +163,8 @@ export default function DNSRecordsClientPage({ userRole }: DNSRecordsClientPageP
     }
   };
 
-  if (loading) return <div className="text-center p-4">Carregando registros DNS...</div>;
-  if (error) return <div className="text-center p-4 text-red-500">Erro: {error}</div>;
+  if (loading) return <div className="text-center p-4 text-foreground">Carregando registros DNS...</div>;
+  if (error) return <div className="text-center p-4 text-destructive">Erro: {error}</div>;
 
   // Filtro visual
   let filteredRecords: Array<any> = [];
@@ -175,18 +176,18 @@ export default function DNSRecordsClientPage({ userRole }: DNSRecordsClientPageP
   });
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-background min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-100 rounded-lg">
-            <Database className="h-6 w-6 text-green-600" />
+          <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+            <Database className="h-6 w-6 text-green-600 dark:text-green-400" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Registros DNS</h1>
             <p className="text-muted-foreground">Domínio: {domainName}</p>
           </div>
         </div>
-        <Button onClick={handleAddClick} className="bg-green-600 hover:bg-green-700">
+        <Button onClick={handleAddClick} className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600">
           <PlusCircle className="mr-2 h-5 w-5" />
           Adicionar Registro DNS
         </Button>
@@ -194,90 +195,90 @@ export default function DNSRecordsClientPage({ userRole }: DNSRecordsClientPageP
 
       {/* Cards de estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Database className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+              <Database className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Total de Registros</p>
-              <p className="text-2xl font-bold text-gray-900">{totalRecords}</p>
+              <p className="text-sm font-medium text-muted-foreground">Total de Registros</p>
+              <p className="text-2xl font-bold text-foreground">{totalRecords}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Shield className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+              <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Protegidos</p>
-              <p className="text-2xl font-bold text-gray-900">{proxiedRecords}</p>
+              <p className="text-sm font-medium text-muted-foreground">Protegidos</p>
+              <p className="text-2xl font-bold text-foreground">{proxiedRecords}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Globe className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+              <Globe className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Registros CNAME</p>
-              <p className="text-2xl font-bold text-gray-900">{cnameRecords}</p>
+              <p className="text-sm font-medium text-muted-foreground">Registros CNAME</p>
+              <p className="text-2xl font-bold text-foreground">{cnameRecords}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Activity className="h-5 w-5 text-orange-600" />
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+              <Activity className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Registros A</p>
-              <p className="text-2xl font-bold text-gray-900">{aRecords}</p>
+              <p className="text-sm font-medium text-muted-foreground">Registros A</p>
+              <p className="text-2xl font-bold text-foreground">{aRecords}</p>
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-sm">Filtrar:</span>
-        <button onClick={() => setFilterType('ALL')} className={`px-2 py-1 rounded ${filterType === 'ALL' ? 'bg-green-200' : 'bg-gray-100'}`}>Todos</button>
-        <button onClick={() => setFilterType('A')} className={`px-2 py-1 rounded ${filterType === 'A' ? 'bg-green-200' : 'bg-gray-100'}`}>A</button>
-        <button onClick={() => setFilterType('CNAME')} className={`px-2 py-1 rounded ${filterType === 'CNAME' ? 'bg-green-200' : 'bg-gray-100'}`}>CNAME</button>
+        <span className="text-sm text-foreground">Filtrar:</span>
+        <button onClick={() => setFilterType('ALL')} className={`px-2 py-1 rounded ${filterType === 'ALL' ? 'bg-green-200 dark:bg-green-800' : 'bg-muted hover:bg-muted/80'}`}>Todos</button>
+        <button onClick={() => setFilterType('A')} className={`px-2 py-1 rounded ${filterType === 'A' ? 'bg-green-200 dark:bg-green-800' : 'bg-muted hover:bg-muted/80'}`}>A</button>
+        <button onClick={() => setFilterType('CNAME')} className={`px-2 py-1 rounded ${filterType === 'CNAME' ? 'bg-green-200 dark:bg-green-800' : 'bg-muted hover:bg-muted/80'}`}>CNAME</button>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border">
+      <div className="bg-card rounded-lg shadow-sm border border-border">
         <table className="min-w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-muted/50">
             <tr>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Nome</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Tipo</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Conteúdo</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Proxied</th>
-              <th className="py-3 px-4 text-left text-sm font-medium text-gray-600">Ações</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">Nome</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">Tipo</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">Conteúdo</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">Proxied</th>
+              <th className="py-3 px-4 text-left text-sm font-medium text-muted-foreground">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-border">
             {filteredRecords.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 px-4 text-center text-gray-500">
+                <td colSpan={5} className="py-8 px-4 text-center text-muted-foreground">
                   Nenhum registro DNS encontrado.
                 </td>
               </tr>
             ) : (
               filteredRecords.map((record) => (
-                <tr key={record.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 text-sm font-medium text-gray-900">
+                <tr key={record.id} className="hover:bg-muted/50">
+                  <td className="py-3 px-4 text-sm font-medium text-foreground">
                     {(record.record_type === 'CNAME' || record.recordType === 'CNAME') && 
                      record.name && domainName && record.name.endsWith(domainName)
                       ? record.name.substring(0, record.name.length - domainName.length - 1)
                       : record.name}
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
                       (record.record_type === 'CNAME' || record.recordType === 'CNAME') ? 'bg-blue-100 text-blue-800' :
                       (record.record_type === 'A' || record.recordType === 'A') ? 'bg-green-100 text-green-800' :
@@ -287,31 +288,31 @@ export default function DNSRecordsClientPage({ userRole }: DNSRecordsClientPageP
                       {record.record_type || record.recordType}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">{record.content}</td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">{record.content}</td>
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                      record.proxied ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      record.proxied ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' : 'bg-muted text-muted-foreground'
                     }`}>
                       {record.proxied ? 'Sim' : 'Não'}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-sm text-gray-600">
+                  <td className="py-3 px-4 text-sm text-muted-foreground">
                     <div className="flex gap-2">
                       <button
                         type="button"
                         onClick={() => handleEditClick(record)}
-                        className="p-2 rounded hover:bg-gray-100 focus:outline-none"
+                        className="p-2 rounded hover:bg-muted focus:outline-none"
                         aria-label="Editar registro DNS"
                       >
-                        <Edit className="h-5 w-5 text-green-600" />
+                        <Edit className="h-5 w-5 text-green-600 dark:text-green-400" />
                       </button>
                       <button
                         type="button"
                         onClick={() => handleDeleteClick(record)}
-                        className="p-2 rounded hover:bg-gray-100 focus:outline-none"
+                        className="p-2 rounded hover:bg-muted focus:outline-none"
                         aria-label="Excluir registro DNS"
                       >
-                        <Trash2 className="h-5 w-5 text-red-600" />
+                        <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
                       </button>
                     </div>
                   </td>

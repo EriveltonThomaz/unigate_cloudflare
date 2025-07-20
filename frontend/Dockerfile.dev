@@ -1,0 +1,23 @@
+# Use a imagem oficial do Node.js como base
+FROM node:20-alpine
+
+# Instale o pnpm globalmente
+RUN npm install -g pnpm
+
+# Defina o diretório de trabalho
+WORKDIR /app
+
+# Copie os arquivos de configuração
+COPY package.json ./
+
+# Instale as dependências sem usar o lockfile e sem executar scripts
+RUN pnpm install --no-frozen-lockfile --ignore-scripts
+
+# Copie o restante dos arquivos do projeto
+COPY . .
+
+# Exponha a porta que o Next.js usa
+EXPOSE 3000
+
+# Comando para iniciar a aplicação Next.js em modo de desenvolvimento
+CMD ["pnpm", "run", "dev"]

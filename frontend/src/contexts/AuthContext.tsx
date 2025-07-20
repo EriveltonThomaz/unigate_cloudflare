@@ -44,8 +44,16 @@ export function AuthProvider({ children, user: initialUser }: { children: ReactN
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Voltar para email, pois o backend espera esse campo
-      const response = await axios.post(`${API_URL}/auth/token/`, { email, password });
+      // Tentamos ambas as rotas possíveis para autenticação
+      let response;
+      try {
+        console.log("Tentando login com URL:", `${API_URL}/token/`);
+        response = await axios.post(`${API_URL}/token/`, { email, password });
+      } catch (err) {
+        console.log("Primeira tentativa falhou, tentando rota alternativa:", `${API_URL}/auth/token/`);
+        response = await axios.post(`${API_URL}/auth/token/`, { email, password });
+      }
+      
       const { access, refresh } = response.data;
 
       Cookies.set('access_token', access, { expires: 1 / 24 });

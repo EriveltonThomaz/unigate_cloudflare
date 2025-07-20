@@ -49,13 +49,16 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile.fixed
-    image: unigate-frontend:latest
+      dockerfile: Dockerfile.dev
+    image: unigate-frontend-dev:latest
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api}
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: ${NODE_ENV:-development}
     depends_on:
       - backend
     networks:

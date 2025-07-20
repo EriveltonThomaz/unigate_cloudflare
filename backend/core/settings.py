@@ -94,6 +94,7 @@ SIMPLE_JWT = {
 # CORS para desenvolvimento
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://cloudflare.unigate.com.br",
     "http://127.0.0.1:3000",
     "http://192.168.34.65:3000",
     "http://192.168.34.65:3001",

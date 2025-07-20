@@ -198,11 +198,11 @@ const DomainPageClient = ({ tenantId, userRole, permissions: initialPermissions 
   const totalVisitors = Object.values(uniqueVisitors).reduce((acc, v) => acc + (typeof v === 'number' ? v : 0), 0);
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-background min-h-screen">
       <div className="mb-2 text-xs text-muted-foreground">Página inicial do cliente</div>
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-green-100 rounded-lg">
-          <Globe className="h-6 w-6 text-green-600" />
+        <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+          <Globe className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">
@@ -213,36 +213,36 @@ const DomainPageClient = ({ tenantId, userRole, permissions: initialPermissions 
 
       {/* Cards de estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Database className="h-5 w-5 text-blue-600" />
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+              <Database className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Total de Domínios</p>
-              <p className="text-2xl font-bold text-gray-900">{totalDomains}</p>
+              <p className="text-sm font-medium text-muted-foreground">Total de Domínios</p>
+              <p className="text-2xl font-bold text-foreground">{totalDomains}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <UserCheck className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+              <UserCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Domínios Ativos</p>
-              <p className="text-2xl font-bold text-gray-900">{activeDomains}</p>
+              <p className="text-sm font-medium text-muted-foreground">Domínios Ativos</p>
+              <p className="text-2xl font-bold text-foreground">{activeDomains}</p>
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg p-4 shadow-sm border">
+        <div className="bg-card rounded-lg p-4 shadow-sm border border-border">
           <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Activity className="h-5 w-5 text-purple-600" />
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+              <Activity className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-600">Visitantes Únicos</p>
-              <p className="text-2xl font-bold text-gray-900">{totalVisitors}</p>
+              <p className="text-sm font-medium text-muted-foreground">Visitantes Únicos</p>
+              <p className="text-2xl font-bold text-foreground">{totalVisitors}</p>
             </div>
           </div>
         </div>
@@ -254,19 +254,19 @@ const DomainPageClient = ({ tenantId, userRole, permissions: initialPermissions 
             placeholder="Pesquisar por nome de domínio..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="border rounded px-3 py-1"
+            className="border border-input bg-background rounded px-3 py-1 text-foreground"
           />
           <Button variant="outline">Buscar</Button>
         </div>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredDomains.map(domain => (
-          <div key={domain.id} className="bg-white rounded-lg shadow p-4 flex flex-col gap-2">
+          <div key={domain.id} className="bg-card rounded-lg shadow p-4 flex flex-col gap-2 border border-border">
             <div className="flex items-center justify-between">
               <div>
                 <div className="font-bold text-lg text-foreground">{domain.name}</div>
-                <div className="text-sm text-muted-foreground">Status: <span className={domain.status === 'active' ? 'text-green-600' : 'text-gray-400'}>✓ {domain.status === 'active' ? 'Ativo' : domain.status}</span></div>
-                <div className="text-sm text-muted-foreground">Visitantes únicos: <span className="font-semibold">{uniqueVisitors[domain.id] !== undefined && uniqueVisitors[domain.id] !== null ? uniqueVisitors[domain.id] : '-'}</span></div>
+                <div className="text-sm text-muted-foreground">Status: <span className={domain.status === 'active' ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}>✓ {domain.status === 'active' ? 'Ativo' : domain.status}</span></div>
+                <div className="text-sm text-muted-foreground">Visitantes únicos: <span className="font-semibold text-foreground">{uniqueVisitors[domain.id] !== undefined && uniqueVisitors[domain.id] !== null ? uniqueVisitors[domain.id] : '-'}</span></div>
                 <div className="text-sm text-muted-foreground">Plano: Free</div>
               </div>
               <div
@@ -274,7 +274,7 @@ const DomainPageClient = ({ tenantId, userRole, permissions: initialPermissions 
                 data-action-menu={actionMenuOpen === domain.id ? 'open' : undefined}
               >
                 <button
-                  className="px-2 py-1 rounded hover:bg-muted"
+                  className="px-2 py-1 rounded hover:bg-muted text-foreground"
                   onClick={() => setActionMenuOpen(domain.id === actionMenuOpen ? null : domain.id)}
                   data-action-menu
                 >
@@ -282,14 +282,14 @@ const DomainPageClient = ({ tenantId, userRole, permissions: initialPermissions 
                 </button>
                 {actionMenuOpen === domain.id && (
                   <div
-                    className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+                    className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-popover shadow-lg ring-1 ring-border focus:outline-none z-10"
                     data-action-menu
                   >
                     <div className="py-1">
-                      <a href={`/admin/domains/${domain.id}/dnsrecords`} className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+                      <a href={`/admin/domains/${domain.id}/dnsrecords`} className="block w-full px-4 py-2 text-left text-sm text-foreground hover:bg-muted">
                         Configurar DNS
                       </a>
-                      <button className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-100" onClick={e => { e.stopPropagation(); handleDeleteDomain(domain.id); }}>
+                      <button className="block w-full px-4 py-2 text-left text-sm text-destructive hover:bg-destructive/10" onClick={e => { e.stopPropagation(); handleDeleteDomain(domain.id); }}>
                         Remover da Cloudflare
                       </button>
                     </div>

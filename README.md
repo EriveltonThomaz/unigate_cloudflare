@@ -1,121 +1,109 @@
-# UniGate - Sistema de Gerenciamento
+# UniGate - Gerenciador de Domínios Cloudflare
 
-Sistema de gerenciamento de domínios e DNS com integração com Cloudflare.
+Sistema para gerenciamento de domínios e registros DNS no Cloudflare, com suporte a múltiplos tenants.
 
-## Requisitos
+## Ambientes de Implantação
 
-- Docker e Docker Compose
-- Git
+Este projeto suporta diferentes ambientes de implantação:
 
-## Configuração Inicial
+### 1. Desenvolvimento Local com Docker Compose
 
-1. Clone o repositório:
-
-```bash
-git clone https://github.com/seu-usuario/unigate.git
-cd unigate
-```
-
-2. Configure os arquivos de ambiente:
+Para desenvolvimento local com Docker Compose:
 
 ```bash
-cp frontend/.env.example frontend/.env
-cp backend/.env.example backend/.env
+docker-compose -f docker-compose.dev.yml up
 ```
 
-3. Edite os arquivos `.env` conforme necessário.
+### 2. Produção com Docker Compose
 
-## Executando com Docker
-
-Para iniciar todos os serviços:
+Para ambiente de produção com Docker Compose:
 
 ```bash
-docker-compose up -d
+./build-prod.sh
+./run-prod.sh
 ```
 
-Para inicializar o banco de dados e criar um superusuário:
+### 3. Teste Local com Docker Swarm
+
+Para testar localmente com Docker Swarm:
 
 ```bash
-docker-compose up init_backend
+# Implantar ambiente local com Traefik
+./deploy-local.sh
+
+# Verificar status do ambiente local
+./check-local.sh
 ```
 
-## Acessando a Aplicação
+### 4. Produção com Docker Swarm
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/api
-- Admin Django: http://localhost:8000/admin
-
-## Desenvolvimento
-
-### Frontend
-
-O frontend é construído com:
-
-- Next.js
-- Material UI
-- TypeScript
-- Axios para requisições API
-
-Para desenvolvimento local sem Docker:
+Para ambiente de produção com Docker Swarm:
 
 ```bash
-cd frontend
-pnpm install
-pnpm run dev
+# Implantar Traefik
+./deploy-traefik.sh
+
+# Enviar imagens para o Docker Hub
+./push-to-dockerhub.sh
+
+# Implantar stack
+./deploy-swarm.sh
 ```
 
-### Backend
+## Monitoramento e Manutenção
 
-O backend é construído com:
-
-- Django
-- Django REST Framework
-- PostgreSQL
-- Cloudflare API
-
-Para desenvolvimento local sem Docker:
+### Verificar Status dos Serviços
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+# Para ambiente Docker Compose
+./check-status.sh
+
+# Para ambiente Docker Swarm local
+./check-local.sh
 ```
 
-## Estrutura do Projeto
+### Reconstruir Frontend
 
-```
-.
-├── backend/                # Aplicação Django
-│   ├── accounts/           # App de autenticação
-│   ├── admin_api/          # API de administração
-│   ├── cloudflare_api/     # Integração com Cloudflare
-│   ├── core/               # Configurações do projeto
-│   ├── domains/            # Gerenciamento de domínios
-│   └── tenants/            # Gerenciamento de inquilinos
-├── frontend/               # Aplicação Next.js
-│   ├── public/             # Arquivos estáticos
-│   └── src/                # Código fonte
-│       ├── app/            # Páginas da aplicação
-│       ├── components/     # Componentes React
-│       ├── contexts/       # Contextos React
-│       ├── hooks/          # Hooks personalizados
-│       ├── services/       # Serviços de API
-│       ├── theme/          # Configuração de tema
-│       └── utils/          # Utilitários
-└── docker-compose.yml      # Configuração Docker
+```bash
+./rebuild-frontend.sh
 ```
 
-## Contribuindo
+### Reiniciar Backend
 
-1. Crie um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`)
-4. Faça push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+```bash
+./restart-backend.sh
+```
 
-## Licença
+### Enviar Imagens para Docker Hub
 
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
+```bash
+./push-to-dockerhub.sh
+```
+
+## Documentação
+
+- [Guia de Produção](PRODUCTION_GUIDE.md)
+- [Guia de Implantação no Swarm](SWARM_DEPLOYMENT_GUIDE.md)
+- [Guia do Docker Hub](DOCKERHUB_GUIDE.md)
+
+## Domínios
+
+### Ambiente de Produção
+- Frontend: https://cloudflare.unigate.com.br
+- Backend API: https://cloudflare.api.unigate.com.br
+- Traefik Dashboard: https://cloudflare.tfk.unigate.com.br
+
+### Ambiente Local
+- Frontend: http://localhost
+- Backend API: http://localhost/api
+- Admin: http://localhost/admin
+- Traefik Dashboard: http://localhost:8080/dashboard/
+
+## Credenciais Padrão
+
+### Ambiente Local
+- **Admin Django**: admin / admin
+- **Traefik Dashboard**: admin / admin
+
+### Ambiente de Produção
+- As credenciais são definidas no arquivo `.env.prod`
